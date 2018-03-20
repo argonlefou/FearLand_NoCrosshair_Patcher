@@ -1,6 +1,6 @@
 # Fearland NoCrosshair Patcher
 
-There are 3 different version of the game released so far.  
+There are 3 different versions of the game released so far.  
 Use this tool to open the .exe file and know which one it is.  
 
 You then have 2 options (buttons) with the software :  
