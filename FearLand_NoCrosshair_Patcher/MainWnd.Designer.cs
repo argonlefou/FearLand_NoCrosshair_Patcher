@@ -122,7 +122,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainWnd";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Fright Fear Land - Patcher";
+            this.Text = "Fright Fear Land - Patcher v2.0";
             this.ResumeLayout(false);
             this.PerformLayout();
 

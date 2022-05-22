@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace FearLand_NoCrosshair_Patcher
 {
@@ -10,7 +11,12 @@ namespace FearLand_NoCrosshair_Patcher
         private const string GAME_FFL_ORIGINAL_MD5 = "03-20-D6-8A-CF-B7-EE-7B-47-84-ED-43-B1-13-F0-A0";
         private const string GAME_FFL_FULL_MD5 = "D3-63-9B-F0-4A-BA-BC-72-46-DF-5A-0A-08-92-40-8B";
         private const string GAME_FFL_ALLRH_MD5 = "83-72-32-3F-FC-EE-BF-D0-64-70-70-64-AC-00-C0-43";
-        private const string GAME_HM2_MD5 = "ED-E2-A1-0F-E3-72-21-D3-99-4F-31-55-3B-3A-4E-F5";
+
+        private const string GAME_HM2_1_01_JPN_v1_MD5 = "ED-E2-A1-0F-E3-72-21-D3-99-4F-31-55-3B-3A-4E-F5";
+        private const string GAME_HM2_1_01_JPN_v2_MD5 = "FB-49-3E-DA-4C-BC-8A-08-66-FA-73-3F-B7-84-F0-E5";
+        private const string GAME_HM2_JCONFIG_1_00_BGR_MD5 = "9B-55-67-BD-A6-99-41-92-3F-EB-3F-2E-05-61-9C-68";
+        private const string GAME_HM2_JCONFIG_1_01_JPN_v1_MD5 = "26-4D-67-1B-83-28-2A-09-70-1B-27-F2-24-9C-5D-0D";
+        private const string GAME_HM2_JCONFIG_1_01_JPN_v2_MD5 = "0E-8F-49-EB-44-8F-F7-C9-BD-44-89-40-A5-3A-C1-6A";
 
         private string _sMD5 = string.Empty;
         private string _TargetFile = string.Empty;
@@ -57,9 +63,20 @@ namespace FearLand_NoCrosshair_Patcher
                         else if (_sMD5.Equals(GAME_FFL_ALLRH_MD5))
                             WriteLog("\"Game Loader All RH\" Fright Fear Land game.exe detected !\nDemulShooter command: demulshooter.exe -target=globalvr -rom=fearland");
 
-                        else if (_sMD5.Equals(GAME_HM2_MD5))
-                            WriteLog("\"Haunted Museum 2\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
+                        else if (_sMD5.Equals(GAME_HM2_1_01_JPN_v1_MD5))
+                            WriteLog("\"Haunted Museum 2 v1.01 JPN first release\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
 
+                        else if (_sMD5.Equals(GAME_HM2_1_01_JPN_v2_MD5))
+                            WriteLog("\"Haunted Museum 2 v1.01 JPN first release\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
+
+                        else if (_sMD5.Equals(GAME_HM2_JCONFIG_1_00_BGR_MD5))
+                            WriteLog("\"Haunted Museum 2 v1.00 BGR for Jconfig\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
+
+                        else if (_sMD5.Equals(GAME_HM2_JCONFIG_1_01_JPN_v1_MD5))
+                            WriteLog("\"Haunted Museum 2 v1.01 JPN for Jconfig\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
+
+                        else if (_sMD5.Equals(GAME_HM2_JCONFIG_1_01_JPN_v2_MD5))
+                            WriteLog("\"Haunted Museum 2 v1.01 JPN_v2 for Jconfig\" TTX game.exe detected !\nDemulShooter command: demulshooter.exe -target=ttx -rom=hmuseum2");
 
                         else
                             WriteLog("Unknown game.exe version, proceed with caution !");                        
@@ -129,22 +146,64 @@ namespace FearLand_NoCrosshair_Patcher
             {
                 WriteLog("Applying \"No-Crosshair Patch\" ...");
 
-                if (_sMD5 == GAME_HM2_MD5)
+                if (_sMD5 == GAME_HM2_1_01_JPN_v1_MD5)
                 {
                     //Remove crosshairs textures during gameplay only
-                    ModifyBytes(0x0007197D, new byte[] { 0x6A, 0x00, 0x90, 0x90, 0x90 });
-                    ModifyBytes(0x00071549, new byte[] { 0x6A, 0x00, 0x90, 0x90, 0x90 });
+                    RemoveCrosshair(0x0007197D, 0x00071549);
                     //Change Ammo font size
-                    ModifyBytes(0x0029CE6C, new byte[] { 0xCD, 0xCC, 0x4C, 0x3F });
-                    ModifyBytes(0x0029C0E0, new byte[] { 0x00, 0x00, 0x00, 0x3F });
+                    ChangeammoFontSize(0x0029CE6C, 0x0029C0E0);
                     //Force game to read our axis values for Ammo display
-                    ModifyBytes(0x00071651, new byte[] { 0x83, 0xC4, 0x08, 0xFF, 0x35, 0xE8, 0x65, 0x72, 0x00, 0xFF, 0x35, 0xE0, 0x65, 0x72, 0x00 });
-                    ModifyBytes(0x000716EF, new byte[] { 0x83, 0xC4, 0x08, 0xFF, 0x35, 0xE8, 0x65, 0x72, 0x00, 0xFF, 0x35, 0xE0, 0x65, 0x72, 0x00 });
-                    ModifyBytes(0x00071785, new byte[] { 0x83, 0xC4, 0x08, 0xFF, 0x35, 0xE8, 0x65, 0x72, 0x00, 0xFF, 0x35, 0xE0, 0x65, 0x72, 0x00 });
-                    //JMP to codecave
-                    ModifyBytes(0x00071584, new byte[] { 0xE9, 0x57, 0x39, 0x1F, 0x00 });
-                    //Codecave :
-                    ModifyBytes(0x00264EE0, new byte[] { 0x83, 0xEC, 0x10, 0xF3, 0x0F, 0x7F, 0x04, 0x24, 0x83, 0xEC, 0x10, 0xF3, 0x0F, 0x7F, 0x0C, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x86, 0x17, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0x05, 0x5C, 0x93, 0x8A, 0x00, 0xB8, 0x28, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC8, 0xF3, 0x0F, 0x5C, 0xC1, 0xEB, 0x09, 0xB8, 0x28, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC0, 0xF3, 0x0F, 0x11, 0x05, 0xE0, 0x65, 0x72, 0x00, 0xF3, 0x0F, 0x2A, 0x05, 0x50, 0x93, 0x8A, 0x00, 0xB8, 0x78, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC8, 0xF3, 0x0F, 0x5C, 0xC1, 0xF3, 0x0F, 0x11, 0x05, 0xE8, 0x65, 0x72, 0x00, 0xB8, 0x93, 0x24, 0x49, 0x92, 0xF3, 0x0F, 0x6F, 0x0C, 0x24, 0x83, 0xC4, 0x10, 0xF3, 0x0F, 0x6F, 0x04, 0x24, 0x83, 0xC4, 0x10, 0xE9, 0x31, 0xC6, 0xE0, 0xFF });
+                    PatchAmmoDisplayPosition(0x00071651, 0x000716EF, 0x00071785, 0x007265E0);
+                    //Codecave : File offset 0x264EE0
+                    CreateCodecave(0x00071584, 0x00264EE0, 0x008A9350, 0x007265E0);   
+                }
+                else if (_sMD5 == GAME_HM2_1_01_JPN_v2_MD5)
+                {
+                    if (MessageBox.Show("Impossible to crosshair-patch this version of the game. \nPlease try with another release.", "Error",  MessageBoxButtons.OK, MessageBoxIcon.Error) == System.Windows.Forms.DialogResult.OK)
+                        return;
+
+                    //Remove crosshairs textures during gameplay only
+                    RemoveCrosshair(0x000712AD, 0x00070E79);
+                    //Change Ammo font size
+                    ChangeammoFontSize(0x00299F9C, 0x00299220);
+                    //Force game to read our axis values for Ammo display
+                    PatchAmmoDisplayPosition(0x00070F81, 0x0007101F, 0x000710B5, 0x007232E0);
+                    //Codecave : File offset  0x26219E
+                    //CreateCodecave(0x00070EB4, 0x0026219E, 0x008A6040, 0x007232E0); NOT ENOUGH PLACE !!!  
+                }
+                else if(_sMD5 == GAME_HM2_JCONFIG_1_00_BGR_MD5)
+                {
+                    //Remove crosshairs textures during gameplay only
+                    RemoveCrosshair(0x0007197D, 0x00071549);
+                    //Change Ammo font size
+                    ChangeammoFontSize(0x0029CE6C, 0x0029C0E0);
+                    //Force game to read our axis values for Ammo display
+                    PatchAmmoDisplayPosition(0x00071651, 0x000716EF, 0x00071785, 0x007265E0);
+                    //Codecave : File offset  0x264F1F
+                    CreateCodecave(0x00071584, 0x00264F1F, 0x008A9350, 0x007265E0);   
+                }
+                else if (_sMD5 == GAME_HM2_JCONFIG_1_01_JPN_v1_MD5)
+                {
+                    //Remove crosshairs textures during gameplay only
+                    RemoveCrosshair(0x0071B9D, 0x0071769);
+                    //Change Ammo font size
+                    ChangeammoFontSize(0x0031417C, 0x003133F0);
+                    //Force game to read our axis values for Ammo display
+                    PatchAmmoDisplayPosition(0x00071871, 0x0007190F, 0x000719A5, 0x007AF6E0);
+                    //Codecave : File offset  0x2D4ABF
+                    CreateCodecave(0x000717A4, 0x002D4ABF, 0x00A0EFB0, 0x007AF6E0);   
+                }
+                else if (_sMD5 == GAME_HM2_JCONFIG_1_01_JPN_v2_MD5)
+                {
+                    if (MessageBox.Show("Impossible to crosshair-patch this version of the game. \nPlease try with another release.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error) == System.Windows.Forms.DialogResult.OK)
+                        return;
+
+                    //Remove crosshairs textures during gameplay only
+                    RemoveCrosshair(0x00299F9C, 0x00299220);
+                    //Force game to read our axis values for Ammo display
+                    PatchAmmoDisplayPosition(0x00070F81, 0x0007101F, 0x000710B5, 0x007232E0);
+                    //Codecave : File offset  0x2621CF
+                    //CreateCodecave(0x00070EB4, 0x002621CF, 0x008A6040, 0x007232E0);   NOT ENOUGH PLACE !!!
                 }
                 else
                 {
@@ -179,6 +238,74 @@ namespace FearLand_NoCrosshair_Patcher
             }
             
         }
+
+        //Removing the crosshair design at runtime by replacing the instruction :
+        // - push    offset aSight   ; "sight"
+        //by :
+        // - push 00
+        // - nop
+        // - nop
+        // - nop
+        private void RemoveCrosshair(int Sight00_TextureFileOffset, int Sight_TextureFileOffset)
+        {
+            ModifyBytes(Sight00_TextureFileOffset, new byte[] { 0x6A, 0x00, 0x90, 0x90, 0x90 });
+            ModifyBytes(Sight_TextureFileOffset, new byte[] { 0x6A, 0x00, 0x90, 0x90, 0x90 });
+        }
+
+        //Changing the Ammo display font by modifying float value :
+        // - float1 : 0,33000001 -> 0,8
+        // - float2 : 0,23 -> 0,5
+        private void ChangeammoFontSize(int Float1_FileOffset, int Float2_fileOffset)
+        {
+            ModifyBytes(Float1_FileOffset, new byte[] { 0xCD, 0xCC, 0x4C, 0x3F });
+            ModifyBytes(Float2_fileOffset, new byte[] { 0x00, 0x00, 0x00, 0x3F });
+        }
+
+        //Force the game to read Ammo position calculated in the custom codecave
+        private void PatchAmmoDisplayPosition(int PatchOffset1, int PatchOffset2, int PatchOffset3, int Data_FileOffset)
+        {
+            List<Byte> bPatch = new List<Byte>();
+            bPatch.AddRange(new byte[] { 0x83, 0xC4, 0x08, 0xFF, 0x35 });
+            bPatch.AddRange(BitConverter.GetBytes(Data_FileOffset + 0x08));
+            bPatch.AddRange(new byte[] { 0xFF, 0x35 });
+            bPatch.AddRange(BitConverter.GetBytes(Data_FileOffset));
+
+            ModifyBytes(PatchOffset1, bPatch.ToArray());
+            ModifyBytes(PatchOffset2, bPatch.ToArray());
+            ModifyBytes(PatchOffset3, bPatch.ToArray());
+        }
+
+        //Creating the CodeCave and generating JmpTo and JmpBack instructions
+        //This codecave will read Width/Height of the Viewport and set the position of ammo for P1 / P2 in the memory to be read later
+        private void CreateCodecave(int Injection_FileOffset, int CodeCave_FileOffset, int CaveReadVariable_Offset, int CaveWriteVariable_Offset)
+        {
+            int JmpValue = CodeCave_FileOffset - Injection_FileOffset - 5;
+
+            List<Byte> bCodeCave = new List<Byte>();
+            bCodeCave.Add(0xE9);
+            bCodeCave.AddRange(BitConverter.GetBytes(JmpValue));
+
+            //JMP to codecave
+            ModifyBytes(Injection_FileOffset, bCodeCave.ToArray());
+
+            bCodeCave.Clear();
+            bCodeCave.AddRange(new Byte[] { 0x83, 0xEC, 0x10, 0xF3, 0x0F, 0x7F, 0x04, 0x24, 0x83, 0xEC, 0x10, 0xF3, 0x0F, 0x7F, 0x0C, 0x24, 0x83, 0xF8, 0x00, 0x0F, 0x86, 0x17, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0x05 });
+            bCodeCave.AddRange(BitConverter.GetBytes(CaveReadVariable_Offset + 0xC));
+            bCodeCave.AddRange(new Byte[] { 0xB8, 0x28, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC8, 0xF3, 0x0F, 0x5C, 0xC1, 0xEB, 0x09, 0xB8, 0x28, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC0, 0xF3, 0x0F, 0x11, 0x05 });
+            bCodeCave.AddRange(BitConverter.GetBytes(CaveWriteVariable_Offset));
+            bCodeCave.AddRange(new Byte[] { 0xF3, 0x0F, 0x2A, 0x05 });
+            bCodeCave.AddRange(BitConverter.GetBytes(CaveReadVariable_Offset));
+            bCodeCave.AddRange(new Byte[] { 0xB8, 0x78, 0x00, 0x00, 0x00, 0xF3, 0x0F, 0x2A, 0xC8, 0xF3, 0x0F, 0x5C, 0xC1, 0xF3, 0x0F, 0x11, 0x05 });
+            bCodeCave.AddRange(BitConverter.GetBytes(CaveWriteVariable_Offset + 0x08));
+            bCodeCave.AddRange(new Byte[] { 0xB8, 0x93, 0x24, 0x49, 0x92, 0xF3, 0x0F, 0x6F, 0x0C, 0x24, 0x83, 0xC4, 0x10, 0xF3, 0x0F, 0x6F, 0x04, 0x24, 0x83, 0xC4, 0x10, 0xE9 });
+
+            int ReturnJmpValue = (Injection_FileOffset + 5) - (CodeCave_FileOffset + bCodeCave.Count + 4);
+            bCodeCave.AddRange(BitConverter.GetBytes(ReturnJmpValue));
+
+            //Codecave :
+            ModifyBytes(CodeCave_FileOffset, bCodeCave.ToArray());            
+        }
+        
 
         private void GetRelocTableAddress()
         {
