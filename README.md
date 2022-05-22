@@ -1,6 +1,6 @@
-# Fearland NoCrosshair Patcher
+# Fearland NoCrosshair Patcher v2.0
 
-There are 3 different versions of the game released so far.  
+There are multiple versions of the game released so far.  
 Use this tool to open the .exe file and know which one it is.  
 
 You then have 2 options (buttons) with the software :  
